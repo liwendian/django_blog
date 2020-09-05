@@ -3,6 +3,21 @@ from django.db import models
 from django.contrib.auth.models import User
 # timezone 用于处理时间相关事务。
 from django.utils import timezone
+# Django-taggit 文章标签模块
+from taggit.managers import TaggableManager
+
+#博客分类模型
+class ArticleColumn(models.Model):
+    """
+    栏目的 Model
+    """
+    # 栏目标题
+    title = models.CharField(max_length=100, blank=True)
+    # 创建时间
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
 
 # 博客文章数据模型
 class ArticlePost(models.Model):
@@ -12,8 +27,23 @@ class ArticlePost(models.Model):
     # 文章标题。models.CharField 为字符串字段，用于保存较短的字符串，比如标题
     title = models.CharField(max_length=100)
 
+    # 文章栏目的 “一对多” 外键
+    column = models.ForeignKey(
+        ArticleColumn,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='article'
+    )
+
+    #浏览量
+    total_views = models.PositiveIntegerField(default=0)
+
     # 文章正文。保存大量文本使用 TextField
     body = models.TextField()
+
+    # 文章标签
+    tags = TaggableManager(blank=True)
 
     # 文章创建时间。参数 default=timezone.now 指定其在创建数据时将默认写入当前的时间
     created = models.DateTimeField(default=timezone.now)
@@ -31,3 +61,5 @@ class ArticlePost(models.Model):
     def __str__(self):
         # return self.title 将文章标题返回
         return self.title
+
+

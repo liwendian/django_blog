@@ -1,0 +1,82 @@
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load my_filters_and_tags %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    文章详情
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 文章详情 -->
+<div class="container">
+    <div class="row">
+        <!-- 目录侧边栏 -->
+        <div class="col-3 mt-4" id="sidebar" class="sidebar">
+            <div class="sidebar__inner">
+                <h4><strong>目录</strong></h4>
+                <hr>
+                <div>
+                    {{ toc|safe }}
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <!-- 标题及作者 -->
+            <h1 class="mt-4 mb-4">{{ article.title }}</h1>
+            <div class="alert alert-success">
+                <i class="fa fa-user" aria-hidden="true"></i>&nbsp;{{ article.author }}&emsp;|&emsp;
+                <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{{ article.total_views }}&emsp;|&emsp;
+                <span>
+                    <i class="fa fa-tags" aria-hidden="true"></i>&nbsp;
+                    {% for tag in article.tags.all %}
+                        <a href="{% url 'article:article_list' %}?tag={{ tag }}"
+                        class="badge badge-secondary" 
+                        >
+                            {{ tag }}
+                        </a>
+                    {% endfor %}
+                </span>&emsp;|&emsp;
+                <span>
+                    <i class="fas fa-clock"></i>
+                    <!--{{ article.created|date:'Y-m-d' }} -->
+                    {{ article.created|timesince_zh }}发布&nbsp;&nbsp;&nbsp;
+                </span>
+            </div>
+            <!-- 文章正文 -->
+            <div class="col-12">
+                <p>{{ article.body|safe }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 粘性侧边栏样式 -->
+<style>
+    .sidebar{
+        will-change: min-height;
+    }
+
+    .sidebar__inner{
+        transform: translate(0, 0);
+        transform: translate3d(0, 0, 0);
+        will-change: position, transform;
+    }
+</style>
+
+{% endblock content %}
+
+{% block script %}
+<!-- 引入粘性侧边栏 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/sticky-sidebar/3.3.1/jquery.sticky-sidebar.min.js"></script>
+<script type="text/javascript">
+    $('#sidebar').stickySidebar({
+        topSpacing: 20,
+        bottomSpacing: 20,
+    });
+</script>
+
+{% endblock script %}

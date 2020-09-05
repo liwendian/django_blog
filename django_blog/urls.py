@@ -15,11 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from article.views import article_list
 
 # 存放URL映射关系的列表
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    # 设置文章列表页作为网站主页
+    path('', article_list, name='home'),
     # 新增代码，配置app的url
     path('article/', include('article.urls', namespace='article')),
 ]
