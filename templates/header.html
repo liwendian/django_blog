@@ -1,5 +1,5 @@
 <!-- 定义导航栏 -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
+<nav class="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
   <div class="container">
 
     <!-- 导航栏商标 -->
@@ -15,11 +15,7 @@
         </li>
       </ul>
     </div>
-
   </div>
 </nav>
-<style type="text/css">
-    .navbar{
-    border-bottom:1px solid #afb0b2;   
-    } 
-</style>
+<!--用于加载标签云静态文件-->
+{% include "taggit_templatetags2/tagcanvas_include_js_static.html" %}

@@ -14,8 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from article.views import article_list
+from taggit_templatetags2.views import TagCanvasListView
+from taggit_templatetags2 import urls as taggit_templatetags2_urls
+from article import views
 
 # 存放URL映射关系的列表
 urlpatterns = [
@@ -24,4 +27,5 @@ urlpatterns = [
     path('', article_list, name='home'),
     # 新增代码，配置app的url
     path('article/', include('article.urls', namespace='article')),
+    path('article-list/', views.article_list, name='article_list'),
 ]

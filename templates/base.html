@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{% static 'md_css/monokai.css' %}">
 </head>
 
-<body>
+<body class="bg-light">
     <!-- 引入导航栏 -->
     {% include 'header.html' %}
     <div id="wrapper"><!--解决footer无法下沉到最低的问题-->
@@ -52,8 +52,14 @@
     <!--新增专门用于拼接JavaScript脚本的位置-->
     {% block script %}{% endblock script %}
 
-        <!-- 增加样式 -->
+        <!-- 增加样式#xxy {
+            flex: 0 0 13.666667%;
+            } -->
     <style>
+        #right-bar {
+                flex: 0 0 23%;
+                }
+
         html, body {
             height: 100%;
             margin: 0;
@@ -61,12 +67,12 @@
 
         #wrapper {
             min-height: 100%;
-            margin-bottom: -60px;
+            margin-bottom: -70px;
         }
 
         #footer,
         #push {
-            height: 60px;
+            height: 70px;
         }
     </style>
 

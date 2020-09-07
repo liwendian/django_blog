@@ -12,7 +12,7 @@
 {% block content %}
 
 <!-- 文章详情 -->
-<div class="container">
+<div class="shadow-sm rounded container">
     <div class="row">
         <!-- 目录侧边栏 -->
         <div class="col-3 mt-4" id="sidebar" class="sidebar">
@@ -27,21 +27,16 @@
         <div class="col-9">
             <!-- 标题及作者 -->
             <h1 class="mt-4 mb-4">{{ article.title }}</h1>
-            <div class="alert alert-success">
-                <i class="fa fa-user" aria-hidden="true"></i>&nbsp;{{ article.author }}&emsp;|&emsp;
-                <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{{ article.total_views }}&emsp;|&emsp;
-                <span>
-                    <i class="fa fa-tags" aria-hidden="true"></i>&nbsp;
+            <div class="breadcrumb">
+                <span><i class="fa fa-user" aria-hidden="true" style="color: #FFA500"></i>&nbsp;{{ article.author }}&emsp;|&emsp;
+                <i class="fa fa-eye" aria-hidden="true" style="color: #FFA500"></i>&nbsp;{{ article.total_views }}&emsp;|&emsp;
+                    <i class="fa fa-tags" aria-hidden="true" style="color: #FFA500"></i>&nbsp;
                     {% for tag in article.tags.all %}
-                        <a href="{% url 'article:article_list' %}?tag={{ tag }}"
-                        class="badge badge-secondary" 
-                        >
+                        <a href="{% url 'article:article_list' %}?tag={{ tag }}" class="badge badge-secondary" >
                             {{ tag }}
                         </a>
-                    {% endfor %}
-                </span>&emsp;|&emsp;
-                <span>
-                    <i class="fas fa-clock"></i>
+                    {% endfor %}&emsp;|&emsp;
+                    <i class="fas fa-clock" style="color: #FFA500"></i>
                     <!--{{ article.created|date:'Y-m-d' }} -->
                     {{ article.created|timesince_zh }}发布&nbsp;&nbsp;&nbsp;
                 </span>
@@ -65,6 +60,7 @@
         transform: translate3d(0, 0, 0);
         will-change: position, transform;
     }
+    
 </style>
 
 {% endblock content %}

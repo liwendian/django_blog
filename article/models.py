@@ -6,6 +6,8 @@ from django.utils import timezone
 # Django-taggit 文章标签模块
 from taggit.managers import TaggableManager
 
+from taggit.models import Tag
+
 #博客分类模型
 class ArticleColumn(models.Model):
     """

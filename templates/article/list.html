@@ -2,6 +2,8 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load my_filters_and_tags %}
+{% load taggit_templatetags2_tags %}
+
 
 <!-- 写入 base.html 中定义的 title -->
 {% block title %}
@@ -10,122 +12,160 @@
 
 <!-- 写入 base.html 中定义的 content -->
 {% block content %}
-
+    <br>
     <!-- 定义放置文章标题的div容器 -->
-    <div class="container">
-        <!-- 修改，面包屑的href增加search参数 -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{% url 'article:article_list' %}?search={{ search }}">
-                        最新
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'article:article_list' %}?order=total_views&search={{ search }}">
-                        最热
-                    </a>
-                </li>
-            </ol>
-        </nav>
-
-        <!-- 新增，搜索栏 -->
+    <div class=" container">
         <div class="row">
-            <div class="col-auto mr-auto">
-                <form class="form-inline" >
-                    <label class="sr-only">content</label>
-                    <input type="text" 
-                        class="form-control mb-2 mr-sm-2" 
-                        name="search" 
-                        placeholder="搜索文章..." 
-                        required
-                    >
-                </form>
+            <div class="col-9 shadow-sm rounded bg-white">
+                <!-- 面包屑的href增加search参数 -->
+                <nav aria-label="breadcrumb " class="mt-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'article:article_list' %}?search={{ search }}" style="color:#FFA500;">
+                                最新
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'article:article_list' %}?order=total_views&search={{ search }}" style="color:#FFA500;">
+                                最热
+                            </a>
+                        </li>
+                    </ol>
+                </nav>
+
+                <!-- 搜索栏 -->
+                <!--
+                <div class="row">
+                    <div class="col-auto mr-auto">
+                        <form class="form-inline" >
+                            <label class="sr-only">content</label>
+                            <input type="text" 
+                                class="form-control mb-2 mr-sm-2" 
+                                name="search" 
+                                placeholder="搜索文章..." 
+                                required
+                            >
+                        </form>
+                    </div>
+                </div>-->
+                <!-- 搜索提示语 -->
+                {% if search %}
+                    {% if articles %}
+                        <h4><span style="color: red">"{{ search }}"</span>的搜索结果如下：</h4>
+                        <hr>        
+                    {% else %}
+                        <h4>暂无<span style="color: red">"{{ search }}"</span>有关的文章。</h4>
+                        <hr>
+                    {% endif %}
+                {% endif %}
+                <!--标签搜索提示-->
+                {% if tag %}
+                <h4><span style="color: #FFA500">"{{ tag }}"</span>相关的文章：</h4>
+                        <hr>
+                {% endif %}
+                <!-- 列表循环 -->
+                <div class="row mt-2 ">
+                    {% for article in articles %}
+                        <!-- 文章内容 -->
+                            <div class="col-9 pr-0" style="color:#FFA500; font-size: x-large; " id="xxy">
+                                <!-- 栏目 -->
+                                {% if article.column %}
+                                    [
+                                    <a href="{% url 'article:article_list' %}?column={{ article.column.id }}" style="color: gray;">
+                                        {{ article.column }}
+                                    </a>
+                                    ]
+                                {% endif %}
+                        
+                                    <b>
+                                        <a href="{% url 'article:article_detail' article.id %}"
+                                        style="color: #212529;    
+                                            font-family: 'Ubuntu', 'Noto Serif SC', source-han-serif-sc, sans-serif;
+                                            font-weight: 800;
+                                            font-style: normal;
+                                            font-size: x-large;" 
+                                        >
+                                            {{ article.title }}
+                                        </a>
+                                    </b>
+                                
+                            </div>
+                            
+                            <!-- <div class="col-1 p-0">
+                                文章标签 
+                                <i class="fa fa-tag" style="color: gray;" aria-hidden="true"></i>
+                                <span>
+                                    {% for tag in article.tags.all %}
+                                        <a href="{% url 'article:article_list' %}?tag={{ tag }}"
+                                        class="badge badge-secondary" 
+                                        >
+                                            {{ tag }}
+                                        </a>
+                                    {% endfor %}
+                                </span>
+                            </div> -->
+                            <!-- 摘要 -->
+                            <!--<div>
+                                <p style="color: gray;">
+                                    {{ article.body|slice:'100' }}...
+                                </p>
+                            </div>-->
+                            <div class="col-3">
+                                <!-- 注脚 -->
+                                <p>
+                                    <!-- 附加信息 -->
+                                    <span style="color: darkred;">
+                                        <i class="fas fa-eye" style="color: gray;"></i>
+                                        {{ article.total_views }}&nbsp;&nbsp;
+                                    </span>
+                                    <span style="color: darkred;">
+                                        <i class="fas fa-clock" style="color: gray;"></i>
+                                        <!--{{ article.created|date:'Y-m-d' }} -->
+                                        {{ article.created|timesince_zh }}
+                                    </span>
+                                    <!--<span style="color: darkred;">
+                                        <i class="fas fa-clock" style="color: pink;"></i>
+                                        {{ article.updated|date:'Y-m-d' }} 更新
+                                    </span>-->
+                                </p>
+                            </div>
+                        <hr class="col-11">
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-3" id="right-bar">
+                <div class="clo-12 bg-white shadow-sm rounded right-bbar ">
+ 
+                        <form class="form-inline col-auto pt-3 pb-3" >
+                            <label class="sr-only">content</label>
+                            <input type="text" 
+                                class="form-control " 
+                                name="search" 
+                                placeholder="搜索..." 
+                                required
+                            >
+                        </form>
+                
+                </div>
+                <div class="clo-12 bg-white shadow-sm rounded right-bbar mt-3">1</div>
+                <div class="clo-12 bg-white shadow-sm rounded right-bbar mt-3">
+                   <!-- {% get_tagcloud as tags %}
+                    <ul>
+                    {% for tag in tags %}
+                    <li><font size={{tag.weight|floatformat:0}}>{{tag}}</font></li>
+                    {% endfor %}
+                    </ul>-->
+                    <!--这里是标签云显示的位置
+                        canvas_id是标签与div的ID
+                        urlname是点击单标签跳转的连接地址，
+                        这里直接写在源文件（地址：\env\Lib\site-packages\taggit_templatetags2\
+                        templates\taggit_templatetags2\tagcanvas_include.html第19行）里了
+                    -->
+                    {% include_tagcanvas 'canvas_id' '250px' '300px' 'urlname' '' %}
+                </div>
+                
             </div>
         </div>
-        <!-- 新增，搜索提示语 -->
-        {% if search %}
-            {% if articles %}
-                <h4><span style="color: red">"{{ search }}"</span>的搜索结果如下：</h4>
-                <hr>        
-            {% else %}
-                <h4>暂无<span style="color: red">"{{ search }}"</span>有关的文章。</h4>
-                <hr>
-            {% endif %}
-        {% endif %}
-
-
-        <!-- 列表循环 -->
-        <div class="row mt-2">
-            {% for article in articles %}
-                <!-- 文章内容 -->
-                <div class="col-12">
-                    <!-- 栏目 -->
-                    {% if article.column %}
-                        <button type="button" 
-                            class="btn btn-sm mb-2
-                                {% if article.column.title == 'Django' %}
-                                    btn-success
-                                {% elif article.column.title == 'Java' %}
-                                    btn-danger
-                                {% elif article.column.title == 'HTML' %}
-                                    btn-warning
-                                {% endif %}
-                            "
-                        >
-                        <a href="{% url 'article:article_list' %}?column={{ article.column.id }}" style="color: white;">
-                            {{ article.column }}
-                        </a>
-                        </button>
-                    {% endif %}
-                    <!-- 文章标签 -->
-                    <span>
-                        {% for tag in article.tags.all %}
-                            <a href="{% url 'article:article_list' %}?tag={{ tag }}"
-                            class="badge badge-secondary" 
-                            >
-                                {{ tag }}
-                            </a>
-                        {% endfor %}
-                    </span>
-                    <!-- 标题 -->
-                    <h4>
-                        <b>
-                            <a href="{% url 'article:article_detail' article.id %}"
-                            style="color: black;" 
-                            >
-                                {{ article.title }}
-                            </a>
-                        </b>
-                    </h4>
-                    <!-- 摘要 -->
-                    <!--<div>
-                        <p style="color: gray;">
-                            {{ article.body|slice:'100' }}...
-                        </p>
-                    </div>-->
-                    <!-- 注脚 -->
-                    <p>
-                        <!-- 附加信息 -->
-                        <span style="color: green;">
-                            <i class="fas fa-eye" style="color: lightskyblue;"></i>
-                            {{ article.total_views }} 浏览&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <span style="color: blue;">
-                            <i class="fas fa-clock" style="color: pink;"></i>
-                            <!--{{ article.created|date:'Y-m-d' }} -->
-                            {{ article.created|timesince_zh }}发布&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <span style="color: darkred;">
-                            <i class="fas fa-clock" style="color: pink;"></i>
-                            {{ article.updated|date:'Y-m-d' }} 更新
-                        </span>
-                    </p>
-                    <hr>
-                </div>
-            {% endfor %}
-        </div>
-
     </div>
 
     <!-- 分页页码导航 -->
