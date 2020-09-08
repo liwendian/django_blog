@@ -12,14 +12,14 @@
 {% block content %}
 
 <!-- 文章详情 -->
-<div class="shadow-sm rounded container">
+<div class="shadow-lg rounded container mt-3">
     <div class="row">
         <!-- 目录侧边栏 -->
         <div class="col-3 mt-4" id="sidebar" class="sidebar">
             <div class="sidebar__inner">
                 <h4><strong>目录</strong></h4>
                 <hr>
-                <div>
+                <div style="color:#FFA500;">
                     {{ toc|safe }}
                 </div>
             </div>
@@ -60,6 +60,9 @@
         transform: translate3d(0, 0, 0);
         will-change: position, transform;
     }
+    .toc ul li a {
+            color:gray;
+        }
     
 </style>
 

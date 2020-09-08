@@ -16,7 +16,7 @@
     <!-- 定义放置文章标题的div容器 -->
     <div class=" container">
         <div class="row">
-            <div class="col-9 shadow-sm rounded bg-white">
+            <div class="col-9 shadow-lg rounded bg-white">
                 <!-- 面包屑的href增加search参数 -->
                 <nav aria-label="breadcrumb " class="mt-3">
                     <ol class="breadcrumb">
@@ -59,37 +59,58 @@
                     {% endif %}
                 {% endif %}
                 <!--标签搜索提示-->
-                {% if tag %}
+                {% if tag and tag != 'None' %}
                 <h4><span style="color: #FFA500">"{{ tag }}"</span>相关的文章：</h4>
                         <hr>
                 {% endif %}
                 <!-- 列表循环 -->
                 <div class="row mt-2 ">
                     {% for article in articles %}
+                    <!-- 标题图 -->
+                            {% if article.avatar %}
+                                <div class="col-4">
+                                    <img src="{{ article.avatar.url }}" 
+                                        alt="avatar" 
+                                        style="max-width:100%; border-radius: 5px"
+                                    >
+                                </div>
+                            {% endif %}
+
                         <!-- 文章内容 -->
-                            <div class="col-9 pr-0" style="color:#FFA500; font-size: x-large; " id="xxy">
+                        <div class="col pr-0"  id="xxy">
                                 <!-- 栏目 -->
                                 {% if article.column %}
-                                    [
+                                    <p style="color:#FFA500; font-size: x-large;">[
                                     <a href="{% url 'article:article_list' %}?column={{ article.column.id }}" style="color: gray;">
                                         {{ article.column }}
-                                    </a>
-                                    ]
+                                    </a>]</p>
+                                    
                                 {% endif %}
-                        
-                                    <b>
-                                        <a href="{% url 'article:article_detail' article.id %}"
-                                        style="color: #212529;    
-                                            font-family: 'Ubuntu', 'Noto Serif SC', source-han-serif-sc, sans-serif;
-                                            font-weight: 800;
-                                            font-style: normal;
-                                            font-size: x-large;" 
-                                        >
-                                            {{ article.title }}
-                                        </a>
-                                    </b>
-                                
-                            </div>
+                                <a href="{% url 'article:article_detail' article.id %}" style="color: #212529; font-size: x-large;" >
+                                    {{ article.title }}
+                                </a> 
+                                <!--文章内容节选--> 
+                                <p style="color: gray; font-size:large;" class="mr-4">
+                                    {{ article.body|slice:'100' }}...
+                                </p>
+                                <!-- 注脚 -->
+                                <p class="mt-2 mb-0" style="font-size:small;" >
+                                    <!-- 附加信息 -->
+                                    <span style="color: #FFA500;">
+                                        <i class="fas fa-eye" style="color: gray;"></i>
+                                        {{ article.total_views }}&nbsp;&nbsp;
+                                    </span>
+                                    <span style="color: gray;">
+                                        <i class="fas fa-clock" style="color: gray;"></i>
+                                        <!--{{ article.created|date:'Y-m-d' }} -->
+                                        {{ article.created|timesince_zh }} 发表&nbsp;&nbsp;
+                                    </span>
+                                    <span style="color: gray;">
+                                        <i class="fas fa-clock" style="color: gray;"></i>
+                                        {{ article.updated|date:'Y-m-d' }} 更新
+                                    </span>
+                                </p>                                                    
+                        </div>
                             
                             <!-- <div class="col-1 p-0">
                                 文章标签 
@@ -104,51 +125,84 @@
                                     {% endfor %}
                                 </span>
                             </div> -->
-                            <!-- 摘要 -->
-                            <!--<div>
-                                <p style="color: gray;">
-                                    {{ article.body|slice:'100' }}...
-                                </p>
-                            </div>-->
-                            <div class="col-3">
-                                <!-- 注脚 -->
-                                <p>
-                                    <!-- 附加信息 -->
-                                    <span style="color: darkred;">
-                                        <i class="fas fa-eye" style="color: gray;"></i>
-                                        {{ article.total_views }}&nbsp;&nbsp;
-                                    </span>
-                                    <span style="color: darkred;">
-                                        <i class="fas fa-clock" style="color: gray;"></i>
-                                        <!--{{ article.created|date:'Y-m-d' }} -->
-                                        {{ article.created|timesince_zh }}
-                                    </span>
-                                    <!--<span style="color: darkred;">
-                                        <i class="fas fa-clock" style="color: pink;"></i>
-                                        {{ article.updated|date:'Y-m-d' }} 更新
-                                    </span>-->
-                                </p>
-                            </div>
                         <hr class="col-11">
                     {% endfor %}
                 </div>
+                <!-- 分页页码导航 -->
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if articles.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="?page={{ articles.previous_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}">{{ articles.previous_page_number }}</a></li>
+                        {% endif %}
+                        <li class="page-item"><a class="page-link" href="#">{{ articles.number }}</a></li>
+                        {% if articles.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ articles.next_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}">{{ articles.next_page_number }}</a></li>
+                            <li class="page-item">
+                            <a class="page-link" href="?page={{ articles.paginator.num_pages }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                            </li>
+                        {% endif %}
+                        
+                    </ul>
+                </nav>
+
+                <!--<div class="pagination row">
+                    <div class="m-auto">
+                        <span class="step-links">
+                            {% if articles.has_previous %}
+                                <a href="?page=1&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" class="btn btn-success">
+                                    &laquo; 1
+                                </a>
+                                <span>...</span>
+                                <a href="?page={{ articles.previous_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" 
+                                class="btn btn-secondary"
+                                >
+                                    {{ articles.previous_page_number }}
+                                </a>
+                            {% endif %}
+                            <span class="current btn btn-lg">
+                                {{ articles.number }}
+                            </span>
+                            {% if articles.has_next %}
+                                <a href="?page={{ articles.next_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}"
+                                class="current btn"
+                                >
+                                    {{ articles.next_page_number }}
+                                </a>
+                                <span>...</span>
+                                <a href="?page={{ articles.paginator.num_pages }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}"
+                                class="current btn-sm"
+                                >
+                                    {{ articles.paginator.num_pages }} &raquo;
+                                </a>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>-->
             </div>
             <div class="col-3" id="right-bar">
-                <div class="clo-12 bg-white shadow-sm rounded right-bbar ">
- 
-                        <form class="form-inline col-auto pt-3 pb-3" >
-                            <label class="sr-only">content</label>
-                            <input type="text" 
-                                class="form-control " 
-                                name="search" 
-                                placeholder="搜索..." 
-                                required
-                            >
-                        </form>
-                
+                <div class="bg-white shadow-sm rounded right-bbar ">
+                    <form class="form-inline col-auto pt-3 pb-3" >
+                        <label class="sr-only">content</label>
+                        <input type="text" 
+                            class="form-control " 
+                            name="search" 
+                            placeholder="搜索..." 
+                            required
+                        >
+                    </form>
                 </div>
-                <div class="clo-12 bg-white shadow-sm rounded right-bbar mt-3">1</div>
-                <div class="clo-12 bg-white shadow-sm rounded right-bbar mt-3">
+                <div class="bg-white shadow-sm rounded right-bbar mt-3">1</div>
+                <div class="bg-white shadow-sm rounded right-bbar mt-3">
                    <!-- {% get_tagcloud as tags %}
                     <ul>
                     {% for tag in tags %}
@@ -161,48 +215,14 @@
                         这里直接写在源文件（地址：\env\Lib\site-packages\taggit_templatetags2\
                         templates\taggit_templatetags2\tagcanvas_include.html第19行）里了
                     -->
-                    {% include_tagcanvas 'canvas_id' '250px' '300px' 'urlname' '' %}
+                    <div class="ml-3 mr-3 pt-3">
+                        <p style="font-size:large;">标签云</p>
+                        <hr class="mb-0">
+                    </div>
+                    {% include_tagcanvas 'canvas_id' '250px' '250px' 'urlname' '' %}
                 </div>
                 
             </div>
-        </div>
-    </div>
-
-    <!-- 分页页码导航 -->
-    <div class="pagination row">
-        <div class="m-auto">
-            <span class="step-links">
-                <!-- 如果不是第一页，则显示上翻按钮 -->
-                {% if articles.has_previous %}
-                    <a href="?page=1&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" class="btn btn-success">
-                        &laquo; 1
-                    </a>
-                    <span>...</span>
-                    <a href="?page={{ articles.previous_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" 
-                    class="btn btn-secondary"
-                    >
-                        {{ articles.previous_page_number }}
-                    </a>
-                {% endif %}
-                <!-- 当前页面 -->
-                <span class="current btn btn-lg">
-                    {{ articles.number }}
-                </span>
-                <!-- 如果不是最末页，则显示下翻按钮 -->
-                {% if articles.has_next %}
-                    <a href="?page={{ articles.next_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}"
-                    class="current btn"
-                    >
-                        {{ articles.next_page_number }}
-                    </a>
-                    <span>...</span>
-                    <a href="?page={{ articles.paginator.num_pages }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}"
-                    class="current btn-sm"
-                    >
-                        {{ articles.paginator.num_pages }} &raquo;
-                    </a>
-                {% endif %}
-            </span>
         </div>
     </div>
 

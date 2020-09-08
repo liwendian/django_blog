@@ -19,6 +19,9 @@ from article.views import article_list
 from taggit_templatetags2.views import TagCanvasListView
 from taggit_templatetags2 import urls as taggit_templatetags2_urls
 from article import views
+# 新引入的模块
+from django.conf import settings
+from django.conf.urls.static import static
 
 # 存放URL映射关系的列表
 urlpatterns = [
@@ -29,3 +32,5 @@ urlpatterns = [
     path('article/', include('article.urls', namespace='article')),
     path('article-list/', views.article_list, name='article_list'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
