@@ -3,6 +3,12 @@ from django.shortcuts import render
 # 导入 HttpResponse 模块
 from django.http import HttpResponse
 
+# 引入 Q 对象[查询对象]
+from django.db.models import Q
+
+# 通用类视图
+from django.views import View
+
 # 导入数据模型ArticlePost
 from .models import ArticlePost
 
@@ -12,8 +18,7 @@ import markdown
 # 引入分页模块
 from django.core.paginator import Paginator
 
-# 引入 Q 对象[查询对象]
-from django.db.models import Q
+
 
 # 视图函数
 def article_list(request):
@@ -84,3 +89,14 @@ def article_detail(request, id):
     context = { 'article': article, 'toc': md.toc }
     # 载入模板，并返回context对象
     return render(request, 'article/detail.html', context)
+
+
+
+
+# 点赞数 +1
+class IncreaseLikesView(View):
+    def post(self, request, *args, **kwargs):
+        article = ArticlePost.objects.get(id=kwargs.get('id'))
+        article.likes += 1
+        article.save()
+        return HttpResponse('success')

@@ -47,6 +47,9 @@ class ArticlePost(models.Model):
     #浏览量
     total_views = models.PositiveIntegerField(default=0)
 
+    # 新增点赞数统计
+    likes = models.PositiveIntegerField(default=0)
+
     # 文章正文。保存大量文本使用 TextField
     body = models.TextField()
 
